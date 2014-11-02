@@ -4,55 +4,55 @@ using System.Linq;
 
 namespace ScriptExecutor
 {
-	public class Program
-	{
-		public Program()
-		{
-		}
+    public class Program
+    {
+        public Program()
+        {
+        }
 
-		public void Main(string[] args)
-		{
-			Console.WriteLine("Prototype: cross-platform script executor");
+        public void Main(string[] args)
+        {
+            Console.WriteLine("Prototype: cross-platform script executor");
 
-			if (args.Length != 1)
-			{
-				Console.WriteLine("Usage: k run [single script block to execute]");
-				return;
-			}
+            if (args.Length != 1)
+            {
+                Console.WriteLine("Usage: k run [single script block to execute]");
+                return;
+            }
 
-			var arguments = args[0].Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries)
-								   .Select(one => one.Trim())
-								   .ToArray();
+            var arguments = args[0].Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries)
+                                   .Select(one => one.Trim())
+                                   .ToArray();
 
-			Console.WriteLine("Is Mono: " + PlatformHelper.IsMono);
-			if (PlatformHelper.IsMono)
-			{
-				arguments[0] = arguments[0] + ".sh";
-			}
-			else
-			{
-				var comSpec = Environment.GetEnvironmentVariable("ComSpec");
-				Console.WriteLine("ComSpec: " + comSpec);
+            Console.WriteLine("Is Mono: " + PlatformHelper.IsMono);
+            if (PlatformHelper.IsMono)
+            {
+                arguments[0] = arguments[0].Replace("\\", "/") + ".sh";
+            }
+            else
+            {
+                var comSpec = Environment.GetEnvironmentVariable("ComSpec");
+                Console.WriteLine("ComSpec: " + comSpec);
 
-				if (!string.IsNullOrEmpty(comSpec))
-				{
-					arguments = new[] { comSpec, "/C", "\""}
-						.Concat(arguments)
-						.Concat(new[] {"\""})
-						.ToArray();
-				}
-			}
+                if (!string.IsNullOrEmpty(comSpec))
+                {
+                    arguments = new[] { comSpec, "/C", "\""}
+                        .Concat(arguments)
+                        .Concat(new[] {"\""})
+                        .ToArray();
+                }
+            }
 
-			Console.WriteLine("Command: {0}", string.Join(" ", arguments));
-			var startInfo = new ProcessStartInfo
-			{
-				FileName = arguments.FirstOrDefault(),
-				Arguments = string.Join(" ", arguments.Skip(1)),
-				UseShellExecute = false
-			};
+            Console.WriteLine("Command: {0}", string.Join(" ", arguments));
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "sh",
+                Arguments = string.Join(" ", arguments),
+                UseShellExecute = false
+            };
 
-			var process = Process.Start(startInfo);
-			process.WaitForExit();
-		}
-	}
+            var process = Process.Start(startInfo);
+            process.WaitForExit();
+        }
+    }
 }
