@@ -14,6 +14,8 @@ namespace ScriptExecutor
 
 			var comSpec = Environment.GetEnvironmentVariable("ComSpec");
 			Console.WriteLine("ComSpec: " + comSpec);
+
+			Console.WriteLine("Is Mono: " + PlatformHelper.IsMono);
 		}
 	}
 }
